@@ -1,0 +1,49 @@
+#inputForm {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    padding: 100px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-button {
+    padding: 12px 20px;
+    margin-top: 10px;
+    width: 70%;
+    color: #D9D9D9;
+}
+
+.choice-interface {
+    display: block;
+    text-align: center;
+    width: 300px;
+    height: 350px;
+    padding: 10px 0;
+    margin: 0 auto;
+    background: #36304A;
+}
+
+.choice-interface img {
+    margin-top: 20px;
+    width: 180px;
+    height: auto;
+}
+
+.choice-interface button:nth-child(2) {
+    background-color: rgba(80, 77, 77, 0.51);
+    border: 1px solid rgba(217, 217, 217, 0.7);
+}
+
+.choice-interface button:nth-child(3) {
+    background-color: rgba(144, 142, 142, 0.51);
+    border: 1px solid rgba(217, 217, 217, 0.7);
+}
+
+.choice-interface button:nth-child(2):hover {
+    background-color: rgba(80, 77, 77, 0.8);
+}
+
+.choice-interface button:nth-child(3):hover {
+    background-color: rgba(144, 142, 142, 0.8);
+}

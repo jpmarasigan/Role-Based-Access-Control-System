@@ -1,0 +1,112 @@
+/* Table Design */
+#customerDetailTable, 
+#customerOrderTable, 
+#productCatalogTable {
+    font-size: 16px;
+    width: 100%;
+    margin: 0;
+    border-spacing: 0;
+}
+
+
+thead > tr:first-child, th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+thead > tr {
+    background-color: #36304A;
+}
+
+#customerDetailTable th, table td, 
+#customerOrderTable th, table td,
+#productCatalogTable th, table td {
+    padding: 10px 0 11px 0;
+}
+
+#customerDetailTable th,
+#customerOrderTable th,
+#productCatalogTable th {
+    color: white;
+    font-weight: normal;
+}
+
+tbody > tr:nth-child(odd) { 
+    background-color: #F0EFEF; 
+}
+tbody > tr:nth-child(even) {
+    background-color: #FFFFFF; 
+}
+
+/* CUSTOMER DETAILS FORMAT */
+#customerDetailTable th:nth-child(1) { width: 10%; text-align: right; }
+#customerDetailTable th:nth-child(2) { width: 15%; text-align: left; padding-left: 50px; }
+#customerDetailTable th:nth-child(3) { width: 15%; text-align: left; padding-left: 50px; }
+#customerDetailTable th:nth-child(4) { width: 25%; text-align: right; padding-right: 50px; }
+#customerDetailTable th:nth-child(5) { width: 15%; text-align: center; }
+
+#customerDetailTable td:nth-child(1) { text-align: right; }
+#customerDetailTable td:nth-child(2) { text-align: left; padding-left: 50px; }
+#customerDetailTable td:nth-child(3) { text-align: left; padding-left: 50px; }
+#customerDetailTable td:nth-child(4) { text-align: right; padding-right: 50px; }
+#customerDetailTable td:nth-child(5) { text-align: center; }
+
+/* CUSTOMER ORDER FORMAT */
+#customerOrderTable th:nth-child(1) { width: 10%; text-align: right; }
+#customerOrderTable th:nth-child(2) { width: 10%; text-align: right; }
+#customerOrderTable th:nth-child(3) { width: 20%; text-align: left; padding-left: 80px; }
+#customerOrderTable th:nth-child(4) { width: 15%; text-align: left; padding-left: 50px; }
+#customerOrderTable th:nth-child(5) { width: 10%; text-align: left; padding-left: 10px; }
+#customerOrderTable th:nth-child(6) { width: 10%; text-align: right; padding-right: 20px; }
+#customerOrderTable th:nth-child(7) { width: 15%; text-align: center; }
+
+#customerOrderTable td:nth-child(1) { text-align: right; }
+#customerOrderTable td:nth-child(2) { text-align: right; }
+#customerOrderTable td:nth-child(3) { text-align: left; padding-left: 80px; }
+#customerOrderTable td:nth-child(4) { text-align: left; padding-left: 50px; }
+#customerOrderTable td:nth-child(5) { text-align: left; padding-left: 10px; }
+#customerOrderTable td:nth-child(6) { text-align: right; padding-right: 20px; }
+#customerOrderTable td:nth-child(7) { text-align: center; }
+
+/* PRODUCT CATALOG FORMAT */
+#productCatalogTable th:nth-child(1) { width: 30%; text-align: left; padding-left: 100px; }
+#productCatalogTable th:nth-child(2) { width: 30%; text-align: left; padding-left: 100px; }
+#productCatalogTable th:nth-child(3) { width: 20%; text-align: right; padding-right: 100px; }
+#productCatalogTable th:nth-child(4) { width: 20%; text-align: center; }
+
+#productCatalogTable td:nth-child(1) { text-align: left; padding-left: 100px; }
+#productCatalogTable td:nth-child(2) { text-align: left; padding-left: 100px; }
+#productCatalogTable td:nth-child(3) { text-align: right; padding-right: 100px; }
+#productCatalogTable td:nth-child(4) { text-align: center; }
+
+/* USER ORDER HISTORY */
+#userOrderHistoryTable th:nth-child(1) { width: 30%; text-align: right; padding-right: 35px; }
+#userOrderHistoryTable th:nth-child(2) { width: 20%; text-align: left; padding-left: 70px; }
+#userOrderHistoryTable th:nth-child(3) { width: 20%; text-align: right; padding-right: 90px; }
+#userOrderHistoryTable th:nth-child(4) { width: 15%; text-align: left;  padding-left: 40px; }
+#userOrderHistoryTable th:nth-child(5) { width: 15%; text-align: center; padding-right: 100px; }
+
+#userOrderHistoryTable td:nth-child(1) { text-align: right; padding-right: 35px; }
+#userOrderHistoryTable td:nth-child(2) { text-align: left; padding-left: 70px; }
+#userOrderHistoryTable td:nth-child(3) { text-align: right; padding-right: 90px; }
+#userOrderHistoryTable td:nth-child(4) { text-align: left;  padding-left: 40px; }
+#userOrderHistoryTable td:nth-child(5) { text-align: center; }
+
+
+/* Scroll Bar Custom Design */
+.scroll-bar {
+    overflow: auto;
+}
+
+.scroll-bar::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+.scroll-bar::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}

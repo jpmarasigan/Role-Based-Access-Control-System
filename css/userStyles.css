@@ -1,0 +1,476 @@
+#userProfileContainer, #adminProfileContainer {
+    position: fixed;
+    left: -100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: #D9D9D9;
+    width: 25%;
+    z-index: 4;
+    transition: left 0.2s ease-in-out;
+}
+
+#userPersonalDetailsContainer, #adminPersonalDetailsContainer {
+    position: fixed;
+    left: -100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 30px;
+    background-color: #D9D9D9;
+    width: 25%;
+    margin-top: 7%;
+    z-index: 3;
+    transition: left 0.2s ease-in-out;
+    border-radius: 0 8px 8px 0;
+    border-left: 1px solid #655F78;
+}
+
+#userPersonalDetailsContainer {
+    height: 80%;
+}
+
+#adminPersonalDetailsContainer {
+    height: 40%;
+}
+
+#userAddOrderContainer, #userDashboardContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;;
+    width: 100%;
+}
+
+#userDashboardContainer .user-form-container {
+    width: 100%;
+    display: grid;
+    margin-top: -15px;
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: auto;
+    gap: 10px;
+    color: #36304A;
+}
+
+.for-visual {
+    background-color: #ccc; /* Just for visual reference */
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.main-data {
+    text-align: left;
+    margin-top: -130px;
+    grid-column: 1 / 2; 
+    grid-row: 1 / 2; 
+}
+
+.graph {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2; 
+}
+
+.sub-data {
+    grid-column: 1 / 3; 
+    grid-row: 2 / 3; 
+}
+
+/* ALL NESTED CLASSIFICATION */
+.main-data p:first-child {
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.main-data p:nth-child(2) {
+    font-size: 16px;
+    font-weight: 600;
+    color: #655F7B;
+}
+
+.main-data p:nth-child(3) {
+    margin-top: 50px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.main-data p:last-child, .main-data span {
+    font-size: 50px;
+    font-weight: 800;
+}
+
+.graph .sub-header {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+}
+
+.sub-1 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    text-align: left;
+}
+
+.sub-1 p {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.sub-2 {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.sub-2 p {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.sub-3 {
+    margin-top: 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+}
+
+.sub-3 > div:first-child > p {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.sub-3 .growth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2262B6;
+    padding: 8px 12px;
+    border-radius: 13px;
+    margin-left: 10px;
+}
+
+.sub-3 > .growth-container > p {
+    font-weight: 600;
+    font-size: 14px;
+    color: #D9D9D9;
+}
+
+
+.sub-data {
+    display: grid;
+    margin-top: 10px;
+    grid-template-columns: 38% 38% 35%;
+    margin-left: 20px;
+}
+
+.sub-data > .sub-data-1, .sub-data > .sub-data-2, .sub-data > .sub-data-3 {
+    text-align: left;
+}
+
+.sub-data-1 {
+    grid-column: 1 / 2;
+}
+
+.sub-data-1 p:first-child, .sub-data-2 p:first-child, .sub-data-3 p:first-child {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.sub-data-1 p:nth-child(2), .sub-data-2 p:nth-child(2), .sub-data-2 p:nth-child(2) span, .sub-data-3 p:nth-child(2), .sub-data-2 {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.sub-data-1 p:nth-child(3), .sub-data-2 p:nth-child(3) {
+    font-size: 16px;
+    font-weight: 600;
+    color: #757373;
+}
+
+.sub-data-1 p:first-child {
+    color: #4958CF;
+}
+
+.sub-data-2 p:first-child {
+    color: #DB942A;
+}
+
+.sub-data-3 p:first-child {
+    color: #FA5E64;
+}
+#userProfileContainer.visible, #adminProfileContainer.visible {
+    left: 0;        /* move to the right edge of the screen */
+}
+
+#userPersonalDetailsContainer.visible, #adminPersonalDetailsContainer.visible {
+    left: 25%;        /* move to the right edge of the opened profile container */
+}
+
+#userAddOrderContainer {
+    z-index: 1;
+}
+
+#userViewEditOrderContainer {
+    z-index: 1;
+}
+
+#userViewEditOrderContainer .form-container {
+    width: 100%;
+    background-color: #D9D9D9;
+    border-radius: 13px;
+    padding: 50px 0 50px 50px;
+    color: #36304A;
+    height: 100%;
+}
+
+
+#userViewEditOrderContainer .filter-container {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    margin-bottom: 50px;
+    margin-right: 50px;
+}
+
+#userViewEditOrderContainer .report-container {
+    border-radius: 13px 0 0 13px;
+    background-color: transparent;
+}
+
+#userViewEditOrderContainer .header h1 {
+    font-weight: bolder;
+    font-size: 26px;
+}
+
+#sortByUserOrder, #searchFilterUserOrder {
+    background-color: #FDFDFD;
+}
+
+#searchFilterUserOrder:focus {
+    outline: 2px solid #C650C0;
+    outline-offset: 2px;
+}
+
+#userOrderHistoryTable {
+    width: 100%;
+    border-spacing: 0;
+}
+
+#userOrderHistoryTable thead th {
+    background-color: #36304A;
+    color: rgb(241, 236, 236);
+    padding: 15px 0;
+}
+
+#userOrderHistoryTable thead th:first-child {
+    width: 10%;
+    border-radius: 13px 0 0 13px;
+}
+
+#userOrderHistoryTable tbody {
+    font-weight: 600;
+}
+
+#userOrderHistoryTableBody tr {
+    background-color: #D9D9D9;
+}
+
+#userOrderHistoryTableBody tr:first-child td {
+    padding-top: 30px;
+    padding-bottom: 20px;
+}
+
+#userOrderHistoryTableBody tr td {
+    border-bottom: 1px solid #939393;
+}
+
+#userOrderHistoryTableBody tr td:last-child {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#userOrderHistoryTableBody tr:first-child td:last-child {
+    padding-bottom: 0;
+}
+
+#userOrderHistoryTableBody td {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.receipt-button {
+    padding: 10px 20px;
+    margin-right: 100px;
+    background-color: #2262B6;
+    color: rgb(241, 236, 236);
+    font-weight: 500;
+}
+
+.receipt-button:hover {
+    filter: brightness(90%);
+}
+
+.profile-div {
+    position: fixed;
+    left: 0;
+    margin-left: 40px;
+}
+
+.profile-icon {
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: rgba(233, 233, 233, 0.8);
+    margin: 0 auto;
+    height: 170px;
+    width: 170px;
+}
+
+.profile-icon img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: auto;
+}
+
+.profile-details h1 {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.profile-details p {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.details-link-container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.details-link {
+    padding: 10px 30px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+#user-details-link-2, #admin-details-link-1 {
+    border-bottom: 1px solid #A39999;
+}
+
+#user-logout-button, #admin-logout-button {
+    margin: 80px 120px 0 120px;
+    padding: 10px;
+    background-image: linear-gradient(-90deg, #C650C0, #4958CF);
+    color: #D9D9D9;
+    transition: all 0.1s ease-out;
+}
+
+#user-logout-button:hover, #admin-logout-button:hover {
+    filter: brightness(90%);
+}
+
+.details-link:hover {
+    background-color: #bcbaba;
+}
+
+.details-link.active {
+    border-left: 3px solid #C650C0;
+    background: #CDCCCC;
+    color: #C650C0;
+}
+
+.header-details {
+    font-weight: 700;
+    color: #655F7B;
+}
+
+#userPersonalDetailsForm input, #adminPersonalDetailsForm input {
+    position: relative;
+}
+
+#userPersonalDetailsForm img, #adminPersonalDetailsForm img {
+    height: 25px;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.input-container img {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5%;
+}
+
+.input-container input {
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.input-container input:focus {
+    border-color: #C650C0;
+}
+
+#user-update-personal-details-button, #admin-update-personal-details-button {
+    background-color: #504D4D;
+    color: #D9D9D9;
+    padding: 10px 30px;
+    border-radius: 13px;
+}
+
+#user-update-personal-details-button:hover, #admin-update-personal-details-button:hover {
+    filter: brightness(90%);
+}
+
+
+/* VALIDATAION MODAL */
+#successModal, #errorModal {
+    z-index: 6;
+}
+
+
+/* FORMS */
+.user-form-container {
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    margin: 15px auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background: #D9D9D9;
+    padding: 40px 100px;
+    border-radius: 13px;
+    gap: 20px;
+}
+
+.user-form-container img {
+    text-align: center;
+}
+
+.user-form-container button {
+    width: 50%;
+}
+
+.col-1 {
+    width: 50%;
+    padding: 0 20px;
+}
+
+.col-2 {
+    width: 50%;
+    text-align: left;
+    padding: 0 40px;
+}
