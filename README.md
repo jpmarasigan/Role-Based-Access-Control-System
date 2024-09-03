@@ -5,10 +5,19 @@
 - Create schema and named it "ecommerce"
 - Create 6 tables ( account, category, customer, order, orderitem, product )
 
-**Table Structure**
-"Account" Table:
-- AccountID (int)(primary)
-- Email (varchar)(foreign)
-- Password (varchar)
+##### Table Structure
+1. "**account**" Table
+  - AccountID (*int*)(*primary*)
+  - Email (*varchar*)(*foreign*)
+  - Password (*varchar*)
+2. "**category**" Table
+  - CategoryID (*varchar*)(*primary*)
+  - CategoryName (*varchar*)
+3. "**customer**" Table
+  - CustomerID (*int*)(*primary*)
+  - FirstName (*varchar*)
+  - LastName (*varchar*)
+  - Email (*varchar*)(*foreign*)
+4. "**order**" Table
   
 
