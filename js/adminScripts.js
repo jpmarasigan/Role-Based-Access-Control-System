@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const adminProfileContainer = document.getElementById('adminProfileContainer');
         const adminPersonalDetailsContainer = document.getElementById('adminPersonalDetailsContainer');
         if (tabId === 'admin-nav-item-1') {
-            if (lastActiveTab === 'admin-nav-item-2') {
+            if (lastActiveTab === 'admin-nav-item-3') {
                 document.getElementById('inputForm').style.display = 'flex';
             }
             if (adminProfileContainer.classList.contains('visible')) {
@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } else {
             document.getElementById('adminProfileContainer').classList.remove('visible');
+            document.getElementById('adminDashboardContainer').style.display = 'none';
             document.getElementById('inputForm').style.display = 'none';
             document.getElementById('customerDetailReport').style.display = 'none';
             document.getElementById('customerOrderReport').style.display = 'none';
@@ -42,18 +43,23 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('profileDisplayBackDrop').style.display = 'none';
 
             if (tabId === 'admin-nav-item-2') {
+                document.getElementById('adminDashboardContainer').style.display = 'flex';
+                adminProfileContainer.classList.remove('visible');
+                adminPersonalDetailsContainer.classList.remove('visible');
+            }
+            else if (tabId === 'admin-nav-item-3') {
                 document.getElementById('inputForm').style.display = 'flex';
                 adminProfileContainer.classList.remove('visible');
                 adminPersonalDetailsContainer.classList.remove('visible');
-            } else if (tabId === 'admin-nav-item-3') {
+            } else if (tabId === 'admin-nav-item-4') {
                 document.getElementById('customerDetailReport').style.display = 'block';
                 adminProfileContainer.classList.remove('visible');
                 adminPersonalDetailsContainer.classList.remove('visible');
-            } else if (tabId === 'admin-nav-item-4') {
+            } else if (tabId === 'admin-nav-item-5') {
                 document.getElementById('customerOrderReport').style.display = 'block';
                 adminProfileContainer.classList.remove('visible');
                 adminPersonalDetailsContainer.classList.remove('visible');
-            } else if (tabId === 'admin-nav-item-5') {
+            } else if (tabId === 'admin-nav-item-6') {
                 document.getElementById('productCatalogReport').style.display = 'block';
                 adminProfileContainer.classList.remove('visible');
                 adminPersonalDetailsContainer.classList.remove('visible');
@@ -334,6 +340,7 @@ formButtons.forEach(button => {
         } else if (clickedButton.dataset.click === 'add-order') {
             document.getElementById('add-order-customer-name').value = '';
             resetOrderProductContainer();
+            document.getElementById('add-order-price').value = '';
             document.getElementById('addCustomerOrderModal').style.display = 'flex';
             document.getElementById('addCustomerOrderBackdrop').style.display = 'block';
         } else if (clickedButton.dataset.click === 'edit-order') {
@@ -514,7 +521,6 @@ cancelButton.forEach(button => {
         event.preventDefault();
         
         const clickedButton = event.target;
-        console.log('Clicked cancel button: ', clickedButton.dataset.action);
 
         if (clickedButton.dataset.action === 'cancel-add-customer-details') {
             document.getElementById('addCustomerModal').style.display = 'none';
@@ -584,16 +590,6 @@ function formatDate(date) {
 }
 
 
-// Date minimum available
-var orderDateInput = document.getElementById('edit-order-date');
-orderDateInput.addEventListener('change', function() {
-    var orderDate = new Date(this.value);
-    var minReceiptDate = new Date(orderDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-    var minReceiptDateStr = minReceiptDate.toISOString().slice(0, 10);
-    document.getElementById('edit-receipt-date').value = minReceiptDateStr;
-});
-
-
 // Check if password has value and set required attribute
 function checkPasswordInput() {
     var oldPassword = document.getElementById('edit-customer-password');
@@ -639,11 +635,42 @@ function getEmailUrlParams() {
     })
 }
 
+// On time validation for category name
+document.getElementById('edit-category-name').addEventListener('input', function(e) {
+    // Regular expression to check for any digits in the input
+    var pattern = /^[^\d]*$/;
+    
+    // Check if the input value matches the pattern
+    if (!pattern.test(e.target.value)) {
+        // If the pattern is not matched, set a custom validity message
+        e.target.setCustomValidity('Only letters are allowed. Please avoid using numbers.');
+    } else {
+        // If the pattern is matched, clear the custom validity message
+        e.target.setCustomValidity('');
+    }
+    
+    // Report the validity to trigger form validation feedback
+    e.target.reportValidity();
+});
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     highlightPersonalDetailsLink();
-//     getEmailUrlParams();
-// });
+// On time validation for category name
+document.getElementById('add-category-name').addEventListener('input', function(e) {
+    // Regular expression to check for any digits in the input
+    var pattern = /^[^\d]*$/;
+    
+    // Check if the input value matches the pattern
+    if (!pattern.test(e.target.value)) {
+        // If the pattern is not matched, set a custom validity message
+        e.target.setCustomValidity('Only letters are allowed. Please avoid using numbers.');
+    } else {
+        // If the pattern is matched, clear the custom validity message
+        e.target.setCustomValidity('');
+    }
+    
+    // Report the validity to trigger form validation feedback
+    e.target.reportValidity();
+});
+
 
 
 // Add Order Product Dropdown
@@ -738,8 +765,8 @@ getProductElement.addEventListener('change', function(event) {
             // If it does exist, just update the productId
             productData[index].productId = selectedProduct;
         }
+        getTotalAmountOrder(productData);
     }
-    getTotalAmountOrder(productData);
 });
 
 getProductElement.addEventListener('input', function(event) {
@@ -758,8 +785,10 @@ getProductElement.addEventListener('input', function(event) {
             // If it does exist, just update the quantity
             productData[index].quantity = parseInt(qty);
         }
-    }  
-    getTotalAmountOrder(productData);
+        getTotalAmountOrder(productData); 
+    }
 });
+
+
 
 

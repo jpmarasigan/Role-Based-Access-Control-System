@@ -64,7 +64,7 @@ function deleteCustomerDetailRecord(email){
         data: recordDataJson,
         success: function(response) {
             var data = JSON.parse(response);
-            console.log(data);
+            console.log(data.message);
             if (data.success) {
                 document.getElementById('confirmModal').style.display = 'none';
                 document.getElementById('successModal').style.display = 'flex';
@@ -189,6 +189,13 @@ function searchCustomerId(id, index) {
                     document.getElementById('edit-receipt-date').value = formattedReceiptDate;
                     document.getElementById('edit-order-date').value = formattedOrderDate;
                     document.getElementById('edit-order-amount').value = customerDetails.TotalAmount;
+                    
+                    // Date minimum available
+                    var orderDate = new Date(customerDetails.OrderDate);
+                    var minReceiptDate = new Date(orderDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    var minReceiptDateStr = minReceiptDate.toISOString().slice(0, 10);
+
+                    document.getElementById('edit-receipt-date').min = minReceiptDateStr;
                 }
                 // Edit Category Name
                 else if (index == 3) {
@@ -216,6 +223,7 @@ function searchCustomerId(id, index) {
                 document.getElementById('edit-order-customer-name').value = '';
                 document.getElementById('edit-order-date').value = '';
                 document.getElementById('edit-order-amount').value = '';
+                document.getElementById('edit-receipt-date').value = '';
                 document.getElementById('edit-category-name').value = '';
                 document.getElementById('editCategoryDropdown').value = '';
                 document.getElementById('edit-product-name').value = '';
@@ -273,7 +281,12 @@ function updateCustomerDetails(id, firstName, lastName, email, password) {
             } else if (response.includes('Same')) {
                 document.getElementById('errorModal').style.display = 'flex';
                 document.getElementById('error-text').innerText = response;
-            } else {
+            }
+            else if (response.includes('Duplicate')) {
+                document.getElementById('errorModal').style.display = 'flex';
+                document.getElementById('error-text').innerText = "Email already taken";
+            } 
+            else {
                 document.getElementById('errorModal').style.display = 'flex';
                 document.getElementById('error-text').innerText = response;
             }  
@@ -453,22 +466,21 @@ function updateUserPersonalDetails(firstName, lastName, oldEmail, newEmail, oldP
 
 
 // ADD USER ORDER 
-function userAddOrder(email, receiptDate, orderDate, amount) {
+function userAddOrder(email, orderList, orderDate, receiptDate, totalAmount) {
     $.ajax({
         type: 'POST',
         url: 'addRecord.php',
-        data: {email: email, receiptDate: receiptDate, orderDate: orderDate, amount: amount, typeOfFetch: 'userAddOrder'},
+        data: {email: email, orderList: orderList, orderDate: orderDate, receiptDate: receiptDate, totalAmount: totalAmount, typeOfFetch: 'userAddOrder'},
         success: function(response) {
             var data = JSON.parse(response);
             if (data.success) {
                 var shippingFee = document.getElementById('user-shipping').innerText;
 
-                document.getElementById('user-add-order-date').value = '';
-                document.getElementById('user-add-order-amount').value = '';
+                document.getElementById('add-order-price').value = '';
 
                 // Apply user details and order details to receipt
                 data['email'] = email;
-                data['amount'] = Number(amount).toFixed(2);
+                data['amount'] = Number(totalAmount).toFixed(2);
                 data['shippingFee'] = shippingFee;
                 localStorage.setItem('userReceipt', JSON.stringify(data));
                 location.reload();
@@ -558,9 +570,8 @@ function getTotalAmountOrder(productData) {
             data: {productId: productData[i].productId, typeOfFetch: 'getProductPrice'},
             success: function(response) {
                 if (!(response.includes('Error'))) {
-                    if (!isNaN(productData[i].quantity)) {
+                    if (!(productData[i].productId == ''))
                         totalAmount += (Number(response) * productData[i].quantity);
-                    }
                 }
             }
         });

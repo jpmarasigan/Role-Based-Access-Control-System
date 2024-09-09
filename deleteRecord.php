@@ -32,14 +32,14 @@
                 } else {
                     $response = array (
                         'success' => false,
-                        'message' => 'Error deleting customer record'
+                        'message' => 'No data deleted'
                     );
                 }
             }
         } catch (mysqli_sql_exception $e) {
             $response = array (
                 'success' => false,
-                'message' => 'Error deleting customer record'
+                'message' => $e->getMessage()
             );
         }
         echo json_encode($response);

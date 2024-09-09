@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-#addCustomerOrderForm .admin-flex {
+#addCustomerOrderForm .admin-flex, #userAddOrderContainer .user-flex {
     display: flex;
     flex-direction: column;
     max-height: 100px;
@@ -17,18 +17,18 @@
     padding: 5px 15px 5px 5px;
 }
 
-#addCustomerOrderForm .admin-inner-flex {
+#addCustomerOrderForm .admin-inner-flex, #userAddOrderContainer .user-inner-flex {
     display: flex;
     flex-direction: row;
     gap: 15px;
     margin-bottom: 25px;
 }
 
-#addCustomerOrderForm .admin-flex input {
+#addCustomerOrderForm .admin-flex input, #userAddOrderContainer .user-flex input {
     width: 90%;
 }
 
-#addCustomerOrderForm input[type="number"] {
+#addCustomerOrderForm input[type="number"], #userAddOrderContainer input[type="number"] {
     width: 50px;
 }
 
@@ -38,26 +38,33 @@
     left: 60%;
 }
 
-#addCustomerOrderForm .admin-flex-button button {
+#userAddOrderContainer .user-flex-button {
+    position: fixed;
+    top: 47%;
+    left: 60%;
+
+}
+
+#addCustomerOrderForm .admin-flex-button button, #userAddOrderContainer .user-flex-button button {
     width: 100%; 
     padding: 4px 10px;
     color: #D9D9D9;
 }
 
-#addCustomerOrderForm .admin-flex-button button:nth-child(1) {
+#addCustomerOrderForm .admin-flex-button button:nth-child(1), #userAddOrderContainer .user-flex-button button:nth-child(1){
     background: #504D4D;
 }
 
-#addCustomerOrderForm .admin-flex-button button:nth-child(2) {
+#addCustomerOrderForm .admin-flex-button button:nth-child(2), #userAddOrderContainer .user-flex-button button:nth-child(2){
     margin-top: 2px;
     background: #ec242e;
 }
 
-.admin-flex-button button:hover {
+.admin-flex-button button:hover, .user-flex-button button:hover{
     filter: brightness(90%);
 }
 
-#addCustomerOrderForm .admin-flex-button {
+#addCustomerOrderForm .admin-flex-button, #userAddOrderContainer .user-flex-button {
     display: flex;
     flex-direction: column;
 }

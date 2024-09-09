@@ -1,3 +1,8 @@
+<?php
+include 'db_connect.php';
+include 'retrieve_record.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +13,8 @@
     <link rel="stylesheet" href="css/tableStyles.css">
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/modalStyles.css">
-    <title>User</title>
+    <link rel="stylesheet" href="css/formStyles.css">
+    <title>OrderMaster</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
     </style>
@@ -93,19 +99,39 @@
         <!-- Add Order -->
         <div id="userAddOrderContainer" class="container pd-main">
             <div class="user-form-container" style="z-index: 1;">
-                <form id="addCustomerOrderForm">
+                <form id="userAddOrderForm">
                     <img src="./assets/add-form/order-add-icon.svg" alt="customer icon" class="customer-icon">
-                    <!-- <div id="addCustomerOrderBackdrop" class="backdrop" style="height: 370px;"></div> -->
-                    <div style="text-align: left;">
-                        <div class="block-label-input mg-bottom-60">
-                            <label for="user-add-order-date">Order Date</label> 
-                            <input type="date" id="user-add-order-date" class="underline-input" style="padding-right: 285px;" required>        
-                        </div>   
-                        <div class="block-label-input mg-bottom-60">
-                            <label for="user-add-order-amount">Amount</label> 
-                            <input type="text" id="user-add-order-amount" class="underline-input" pattern="^\d*(\.\d{0,2})?$" required>        
-                        </div>     
+                    
+                    <div class="user-flex">
+                        <div class="user-inner-flex">
+                            <div class="block-label-input">
+                                <select class="select-filter ht-max pd-filter border-rad-filter corner-smooth mg-right" name="addOrderProductDropdown" style="width: 250px;" required>
+                                    <option value='' selected disabled>Order Product</option>
+                                    <?php
+                                        $sql = "SELECT * FROM `product` ORDER BY ProductName ASC";
+                                        $result_category = $conn->query($sql);
+                                        if ($result_category->num_rows > 0) {
+                                            while($row = $result_category->fetch_assoc()) {
+                                                echo "<option value='".$row['ProductID']."'>" . $row['ProductName'] . "</option>";
+                                            }
+                                        }
+                                    ?>
+                                </select>    
+                            </div>
+                            <div class="block-label-input">
+                                <label for="add-quantity">Qty</label> 
+                                <input type="number" name="add-quantity" class="add-order-quantity underline-input" min="1" value="1" required>        
+                            </div>
+                            <div class="user-flex-button">
+                                <button type="button" class="add-order-product semi-bold border-rad-filter">+</button>
+                                <button type="button" class="delete-order-product semi-bold border-rad-filter">-</button>
+                            </div>
+                        </div>
                     </div>
+                    <div class="block-label-input mg-bottom-40" style="text-align: left;">
+                        <label for="add-order-price">Total Amount</label> 
+                        <input type="text" id="add-order-price" class="underline-input" pattern="^\d*(\.\d{0,2})?$" readonly required>        
+                    </div>  
                     <button type="submit" class="confirm-button modal-button semi-bold corner-smooth border-rad-filter" data-action="user-add-order">Add Order</button>
                 </form>
             </div>                      
@@ -201,7 +227,7 @@
                     </div>
                     <div class="sub-data-3">
                         <p>Recent Order</p>
-                        <p>7up Softdrinks</p>
+                        <p id="user-recent-order"></p>
                     </div>
                 </div>
             </div>                      

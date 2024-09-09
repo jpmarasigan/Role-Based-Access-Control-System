@@ -87,10 +87,6 @@
                 list($letters, $number) = explode('-', $latestOrderID);
                 $letter1 = $letters[0];
                 $letter2 = $letters[1];
-
-                error_log("Letter 1: ". $letter1);
-                error_log("Letter 2: ". $letter2);
-                error_log("Number: ". $number);
             }
             else {
                 $latestOrderID = '';
@@ -123,48 +119,61 @@
 
                 // Execute the statement
                 if ($stmt->execute()) {
+                    // Check if data is inserted
                     if ($stmt->affected_rows > 0) {
-                        echo "Customer order added successfully";
-                    } else {
-                        echo "No data inserted";
-                    }
-                } else {
-                    echo "Error adding customer order";
-                }
-                $stmt->close();
-
-                // Add the order list to the OrderItem table
-                foreach ($orderList as $order) {
-                    // Retrieve price of product
-                    $stmt = $conn->prepare("SELECT Price FROM product WHERE ProductID = ?");
-                    $stmt->bind_param("s", $order['productId']);
-                    
-                    if ($stmt->execute()) {
-                        $result = $stmt->get_result();
                         $stmt->close();
-                        if ($result->num_rows > 0) {
-                            $price = $result->fetch_assoc()['Price'];
+
+                        // Add the order list to the OrderItem table
+                        foreach ($orderList as $order) {
+                            // Retrieve price of product
+                            $stmt = $conn->prepare("SELECT Price FROM product WHERE ProductID = ?");
+                            $stmt->bind_param("s", $order['productId']);
+                            
+                            if ($stmt->execute()) {
+                                $result = $stmt->get_result();
+                                $stmt->close();
+                                if ($result->num_rows > 0) {
+                                    $price = $result->fetch_assoc()['Price'];
+                                }
+                                else {
+                                    $price = 0;
+                                }
+                                
+                                // Add the order item to the OrderItem table
+                                $stmt = $conn->prepare("INSERT INTO orderitem (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)");
+                                $stmt->bind_param("ssdd", $latestOrderID, $order['productId'], $order['quantity'], $price);
+                                
+                                if ($stmt->execute()) {
+                                    if ($stmt->affected_rows < 1) {
+                                        echo "No data inserted";
+                                        return;
+                                    }
+                                }
+                                else {
+                                    echo "Error adding order item";
+                                    return;
+                                }
+                            } 
+                            else {
+                                echo "Error adding order item";
+                                return;
+                            }  
                         }
-                        else {
-                            $price = 0;
-                        }
-                        
-                        // Add the order item to the OrderItem table
-                        $stmt = $conn->prepare("INSERT INTO orderitem (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)");
-                        $stmt->bind_param("ssdd", $latestOrderID, $order['productId'], $order['quantity'], $price);
-                        if ($stmt->execute()) {
-                            if ($stmt->affected_rows > 0) {
-                                echo "Order item added successfully";
-                            } else {
-                                echo "No data inserted";
-                            }
-                        } else {
-                            echo "Error adding order item";
-                        }
-                    } else {
-                        echo "Error adding order item";
-                    }  
+                        echo "Customer order added successfully";
+                    }
+                    else {
+                        echo "No data inserted";
+                        return;
+                    }
                 }
+                else {
+                    echo "Error adding customer order";
+                    return;
+                }
+            }
+            else {
+                echo "Error creating order ID";
+                return;
             }
         }
         // Add Category (Admin)
@@ -252,9 +261,14 @@
         else if ($typeOfFetch == 'userAddOrder') {
             // Retrieve the request data
             $email = $_POST['email'];
-            $receiptDate = $_POST['receiptDate'];
             $orderDate = $_POST['orderDate'];
-            $amount = $_POST['amount'];
+            $receiptDate = $_POST['receiptDate'];
+            $totalAmount = $_POST['totalAmount'];
+
+            // Make it json decode
+            $orderList = $_POST['orderList'];
+            $orderListString = json_encode($orderList);
+            $orderList = json_decode($orderListString, true);
 
             // Retrieve the customer ID
             $stmt = $conn->prepare("SELECT * FROM customer WHERE Email = ?");
@@ -279,10 +293,6 @@
                         list($letters, $number) = explode('-', $latestOrderID);
                         $letter1 = $letters[0];
                         $letter2 = $letters[1];
-
-                        error_log("Letter 1: ". $letter1);
-                        error_log("Letter 2: ". $letter2);
-                        error_log("Number: ". $number);
                     }
                     else {
                         $latestOrderID = '';
@@ -308,48 +318,117 @@
                         }
                         // Combine the Order ID components
                         $latestOrderID = $letter1 . $letter2 . '-' . $number;
-                    }
-                    
-                    // Create new statement
-                    $stmt = $conn->prepare("INSERT INTO `order` (OrderID, CustomerID, OrderDate, ReceiptDate, TotalAmount) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("ssssd", $latestOrderID, $customerId, $orderDate, $receiptDate, $amount);
 
-                    // Execute the statement
-                    if ($stmt->execute()) {
-                        if ($stmt->affected_rows > 0) {
-                            $response = array (
-                                'success' => true,
+                        // Create query
+                        $stmt = $conn->prepare("INSERT INTO `order` (OrderID, CustomerID, OrderDate, ReceiptDate, TotalAmount) VALUES (?, ?, ?, ?, ?)");
+                        $stmt->bind_param("ssssd", $latestOrderID, $customerId, $orderDate, $receiptDate, $totalAmount);
+                        
+                        // Execute the statement
+                        if ($stmt->execute()) {
+                            // Check if data is inserted
+                            if ($stmt->affected_rows > 0) {
+                                $stmt->close();
 
-                                'orderId' => $latestOrderID,
-                                'name' => $customerName,
-                                'message' => "Customer order added successfully"
-                            );
-                        } else {
+                                // Add the order list to the OrderItem table
+                                foreach ($orderList as $order) {
+                                    // Retrieve price of product
+                                    $stmt = $conn->prepare("SELECT Price FROM product WHERE ProductID = ?");
+                                    $stmt->bind_param("s", $order['productId']);
+                                    
+                                    if ($stmt->execute()) {
+                                        $result = $stmt->get_result();
+                                        $stmt->close();
+                                        if ($result->num_rows > 0) {
+                                            $price = $result->fetch_assoc()['Price'];
+                                        }
+                                        else {
+                                            $price = 0;
+                                        }
+                                        
+                                        // Add the order item to the OrderItem table
+                                        $stmt = $conn->prepare("INSERT INTO orderitem (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)");
+                                        $stmt->bind_param("ssdd", $latestOrderID, $order['productId'], $order['quantity'], $price);
+                                        
+                                        if ($stmt->execute()) {
+                                            if ($stmt->affected_rows < 1) {
+                                                $response = array (
+                                                    'success' => false,
+                                                    'message' => "No data inserted"
+                                                );
+                                                echo json_encode($response);
+                                                return;
+                                            }
+                                        }
+                                        else {
+                                            $response = array (
+                                                'success' => false,
+                                                'message' => "Error adding order item"
+                                            );
+                                            echo json_encode($response);
+                                            return;
+                                        }
+                                    } 
+                                    else {
+                                        $response = array (
+                                            'success' => false,
+                                            'message' => "Error adding order item"
+                                        );
+                                        echo json_encode($response);
+                                        return;
+                                    }  
+                                }
+                                $response = array (
+                                    'success' => true,
+                                    'message' => "Order added successfully"
+                                );
+                                echo json_encode($response);
+                                return;
+                            }
+                            else {
+                                $response = array (
+                                    'success' => false,
+                                    'message' => "No data inserted"
+                                );
+                                echo json_encode($response);
+                                return;
+                            }
+                        }
+                        else {
                             $response = array (
                                 'success' => false,
-                                'message' => "No data inserted"
+                                'message' => "Error adding orders"
                             );
+                            echo json_encode($response);
+                            return;
                         }
-                    } else {
+                    }
+                    else {
                         $response = array (
                             'success' => false,
-                            'message' => "Error adding customer order"
+                            'message' => "Error creating order ID"
                         );
+                        echo json_encode($response);
+                        return;
                     }
-                } else {
+                } 
+                else {
                     $response = array (
                         'success' => false,
                         'message' => "No data retrieved"
                     );
+                    echo json_encode($response);
+                    return;
                 }
-            } else {
+            } 
+            else {
                 $response = array (
                     'success' => false,
                     'message' => "Error retrieving customer ID"
                 );
+                echo json_encode($response);
+                return;
             }
             $stmt->close();
-            echo json_encode($response);
         }
     }
 ?>

@@ -19,6 +19,11 @@ function retrieveUserData() {
                 getTotalOrders(data.data);
                 averageSpend(data.data);
                 spendingTrend(data.data);
+                recentOrder(data.data);
+            }
+            else {
+                document.getElementById('errorModal').style.display = 'flex';
+                document.getElementById('error-text').innerText = "System Error! Unable to display user data.";
             }
         }
     })
@@ -73,7 +78,7 @@ function userChart(userData) {
         myChart.destroy();
     }
 
-    // Create a new chart instance
+    // Create a new line chart instance
     myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -91,7 +96,6 @@ function userChart(userData) {
             }]
         },
         options: {
-            legend: {display: false},
             plugins: {
                 title: {
                     display: true,
@@ -270,7 +274,34 @@ function spendingTrend(userData) {
 }
 
 
-// function recentOrder(userData) {
-//     console.log(userData);
-//     let recentOrder = userData[userData.length - 1].OrderItem;
-// }
+function recentOrder(userData) {
+    var getLastOrderId = userData[userData.length - 1].OrderID;
+
+    if (userData.length === 0) {
+        document.getElementById('user-recent-order').innerText = "No recent order";
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: 'fetchRecord.php',
+        data: {getLastOrderId: getLastOrderId, typeOfFetch: 'userRecentOrder'},
+        success: function(response) {
+            var data = JSON.parse(response);
+
+            if (data.success) {
+                var length = data.orderItem.length;
+                var recentOrderProduct = data.orderItem[length - 1].ProductName;
+                document.getElementById('user-recent-order').innerText = recentOrderProduct;
+            }
+            else {
+                if (data.message.includes("No recent order")) {
+                    document.getElementById('user-recent-order').innerText = "No recent order";
+                }
+                else {
+                    document.getElementById('errorModal').style.display = 'flex';
+                    document.getElementById('error-text').innerText = "Invalid email or password";
+                }
+            }
+        }   
+    });
+}

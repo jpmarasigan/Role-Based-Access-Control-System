@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     submitUpdatePersonalDetails();
     showUserOrderHistory();
     checkPasswordInput();
-    setDateConstraint();
     downloadReceipt();
     exitReceiptModal();
     filterUserOrderDetails();
@@ -27,6 +26,7 @@ function highlightUserNavTab() {
         const userProfileContainer = document.getElementById('userProfileContainer');
         const userPersonalDetailsContainer = document.getElementById('userPersonalDetailsContainer');
         if (tabId === 'user-nav-item-1') {
+            document.getElementById('userAddOrderContainer').style.display = 'none';
             if (userProfileContainer.classList.contains('visible')) {
                 document.getElementById('profileDisplayBackDrop').style.display = 'none';
                 userPersonalDetailsContainer.classList.remove('visible');
@@ -148,7 +148,7 @@ function highlightPersonalDetailsLink() {
 // Get Email in URLParams 
 function getEmailUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('email');;
+    const email = urlParams.get('email');
 
     $.ajax({
         type: 'POST',
@@ -222,16 +222,19 @@ function submitUpdatePersonalDetails() {
 
 // Submit New Order 
 function submitNewOrder() {
-    document.getElementById('addCustomerOrderForm').addEventListener('submit', function(event) {
+    document.getElementById('userAddOrderForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
         var today = new Date();
-        var receiptDate = today.toISOString().slice(0, 10);
-        var orderDate = document.getElementById('user-add-order-date').value;
-        var amount = document.getElementById('user-add-order-amount').value;
+        var orderDate = today.toLocaleDateString('en-CA');
+        // Calculate the receipt date (7 days from the order date)
+        var receiptDateObj = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);  
+        var receiptDate = receiptDateObj.toLocaleDateString('en-CA');      
+        var totalAmount = getTotalOrderAmount();
+        var orderList = userProductData;
         var email = new URLSearchParams(window.location.search).get('email');
 
-        userAddOrder(email, receiptDate, orderDate, amount);
+        userAddOrder(email, orderList, orderDate, receiptDate, totalAmount);
     })
 }
 
@@ -255,32 +258,6 @@ cancelErrorButton.addEventListener('click', function() {
     document.getElementById('errorModal').style.display = 'none';
     document.getElementById('error-text').innerText = '';
 })
-
-
-// Date Format and its Minimum Date
-function setDateConstraint() {
-    function formatDate(date) {
-    var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) {
-            month = '0' + month;
-        }
-        if (day.length < 2) {
-            day = '0' + day;
-        }
-
-        return [year, month, day].join('-');
-    }
-
-    // Date minimum available
-    var today = new Date()
-    var formattedToday = formatDate(today);
-    document.getElementById('user-add-order-date').setAttribute('min', formattedToday);
-    // document.getElementById('edit-order-date').setAttribute('min', formattedToday);
-}
 
 
 // SHOW USER ORDER HISTORY 
@@ -328,11 +305,11 @@ function viewReceipt() {
             var name = button.getAttribute('data-user-order-name');
             var email = button.getAttribute('data-user-order-email');
             var orderAmount = button.getAttribute('data-user-order-totalAmount');
-            var receiptDate = button.getAttribute('data-user-order-receiptDate');
+            var orderDate = button.getAttribute('data-user-order-orderDate');
             var shippingFee = 0.00; 
             
             // Apply user details and order details to receipt
-            document.getElementById('user-receipt-date').innerText = receiptDate;
+            document.getElementById('user-receipt-date').innerText = orderDate;
             document.getElementById('user-receipt-order-id').innerText = orderId;
             document.getElementById('user-receipt-name').innerText = name;
             document.getElementById('user-receipt-email').innerText = email;
@@ -379,3 +356,119 @@ function exitReceiptModal() {
         })
     })
 }
+
+
+var addOrderProductContainer = document.querySelector('.user-flex-button');
+addOrderProductContainer.addEventListener('click', function(event) {
+    event.preventDefault();
+    if (event.target.classList.contains('add-order-product')) {
+        var parentElement = event.target.parentNode.parentNode.parentNode;
+        
+        // Add a new product div
+        var newProductDiv = document.createElement('div');
+        newProductDiv.setAttribute('class', 'user-inner-flex');
+
+        // Add innerHTML 
+        $.ajax({
+            url: 'fetchRecord.php',
+            data: {typeOfFetch: 'addProductDropdown'},
+            type: 'POST',
+            success: function(response) {
+                if (response != '') {
+                    var productDivInnerHTML = `
+                    <div class="block-label-input">
+                        <select class="select-filter ht-max pd-filter border-rad-filter corner-smooth mg-right" name="addOrderProductDropdown" style="width: 250px;" required>
+                            <option value='' selected disabled>Order Product</option>
+                            ${response}
+                        </select>    
+                    </div>
+                    <div class="block-label-input">
+                        <label for="add-quantity">Qty</label> 
+                        <input type="number" name="add-quantity" class="add-order-quantity underline-input" min="1" value="1" required>        
+                    </div>
+                    `;
+
+                    newProductDiv.innerHTML = productDivInnerHTML;
+                    parentElement.appendChild(newProductDiv);
+                }
+            }
+        });
+    }
+    else if (event.target.classList.contains('delete-order-product')) {
+        var parentElement = event.target.parentNode.parentNode.parentNode;
+        var lastChildElement = parentElement.children[parentElement.children.length - 1];
+
+        // Remove the element
+        if (parentElement.children.length > 1) {
+            var index = Array.prototype.indexOf.call(parentElement.children, lastChildElement);
+            lastChildElement.remove();
+            if(userProductData[index]) {
+                delete userProductData[index];
+                getTotalAmountOrder(userProductData);
+            }
+        }
+    }
+});
+
+
+// Reset Order Product Container 
+function userResetOrderProductContainer() {
+    productData = {};
+    var parentElement = document.querySelector('.user-flex');
+
+    while (parentElement && parentElement.children.length > 1) {
+        var lastChildElement = parentElement.children[parentElement.children.length - 1];
+        lastChildElement.remove();
+    }
+
+    // Reset the product dropdown and quantity
+    var productDropdown = document.querySelector('[name="addOrderProductDropdown"]');
+    productDropdown.selectedIndex = 0;
+    var quantityInput = document.querySelector('[name="add-quantity"]');
+    quantityInput.value = 1;
+}
+
+
+// Display the value of product dropdown and quantity
+var getProductElement = document.querySelector('.user-flex');
+let userProductData = {};
+
+getProductElement.addEventListener('change', function(event) {
+    if (event.target.name === 'addOrderProductDropdown') {
+        var selectedProduct = event.target.value;    
+        var parentDiv = event.target.closest('.user-inner-flex');
+        var index = Array.prototype.indexOf.call(parentDiv.parentNode.children, parentDiv);
+
+        // If product data for this index doesn't exist, create it
+        if (!userProductData[index]) {
+            userProductData[index] = {
+                productId: selectedProduct,
+                quantity: 1
+            };
+        } else {
+            // If it does exist, just update the productId
+            userProductData[index].productId = selectedProduct;
+        }
+        getTotalAmountOrder(userProductData);
+    }
+});
+
+getProductElement.addEventListener('input', function(event) {
+    if (event.target.name === 'add-quantity') {
+        var qty = event.target.value;    
+        var parentDiv = event.target.closest('.user-inner-flex');
+        var index = Array.prototype.indexOf.call(parentDiv.parentNode.children, parentDiv);
+
+        // If product data for this index doesn't exist, create it
+        if (!userProductData[index]) {
+            userProductData[index] = {
+                productId: '', // We don't know the productId yet
+                quantity: parseInt(qty)
+            };
+        } else {
+            // If it does exist, just update the quantity
+            userProductData[index].quantity = parseInt(qty);
+        }
+        getTotalAmountOrder(userProductData); 
+    }
+});

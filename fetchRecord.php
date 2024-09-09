@@ -244,7 +244,7 @@
                         echo "</td><td><button type='button' "; 
                             echo "data-user-order-orderId='".$row['OrderID']."' ";
                             echo "data-user-order-totalAmount='".$row['TotalAmount']."' ";
-                            echo "data-user-order-receiptDate='".$row['ReceiptDate']."' ";
+                            echo "data-user-order-orderDate='".$row['OrderDate']."' ";
                             echo "data-user-order-email='".$row['Email']."' ";
                             echo "data-user-order-name='".$row['FirstName']." ".$row['LastName']."' ";
                             echo "class='receipt-button border-rad-form'>Receipt</button>";
@@ -313,7 +313,7 @@
                 $stmt->close();
 
                 // Get user overall order record
-                $stmt = $conn->prepare("SELECT * FROM `order` WHERE CustomerID = ?");
+                $stmt = $conn->prepare("SELECT * FROM `order` WHERE CustomerID = ? ORDER BY OrderDate");
                 $stmt->bind_param("s", $customerID);
                 if ($stmt->execute()) {
                     $response = array ( 'success' => true );
@@ -340,6 +340,143 @@
             }
             $stmt->close();
             echo json_encode($response);
+        }
+        else if ($typeOfFetch == 'adminDataDashboard') {
+            // Create statement
+            $stmt = $conn->prepare("SELECT * FROM `order`");
+            if ($stmt->execute()) {
+                $response = array ( 'success' => true );
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    $response = array ('success' => true);
+                    while ($row = $result->fetch_assoc()) {
+                        $response['data']['order'][] = $row;
+                    }
+
+                    // Create new query for top order customer
+                    $stmt = $conn->prepare("SELECT CustomerID, COUNT(CustomerID) AS OrderCount FROM `order` GROUP BY CustomerID ORDER BY OrderCount DESC LIMIT 1");
+                    if ($stmt->execute()) {
+                        $result = $stmt->get_result();
+                        if ($result->num_rows > 0) {
+                            $stmt->close();
+                            $customerId = $result->fetch_assoc()['CustomerID'];
+                            // Get total purchase amount
+                            $stmt = $conn->prepare("SELECT SUM(TotalAmount) AS TotalPurchase, COUNT(CustomerID) AS TotalOrders FROM `order` WHERE CustomerID = ?");
+                            $stmt->bind_param("d", $customerId);
+                            if ($stmt->execute()) {
+                                $result = $stmt->get_result();
+                                $stmt->close();
+                                if ($result->num_rows > 0) {
+                                    $row = $result->fetch_assoc();
+                                    $response['data']['topCustomer']['totalPurchase'] = $row['TotalPurchase'];
+                                    $response['data']['topCustomer']['totalOrders'] = $row['TotalOrders'];
+                                }
+                                else {
+                                    $response['retrievedData'] = false;
+                                    echo json_encode($response);
+                                    return;
+                                }
+                            }
+                            else {
+                                $response['success'] = false;
+                                echo json_encode($response);
+                                return;
+                            }
+
+                            // Get top customer name
+                            $stmt = $conn->prepare("SELECT FirstName, LastName FROM customer WHERE CustomerID = ?");
+                            $stmt->bind_param("d", $customerId);
+
+                            if ($stmt->execute()) {
+                                $result = $stmt->get_result();
+                                if ($result->num_rows > 0) {
+                                    $response['data']['topCustomer']['name'] = $result->fetch_assoc();
+
+                                    // Create new query for top selling product
+                                    $stmt = $conn->prepare("SELECT ProductID, COUNT(ProductID) AS OrderCount FROM `orderitem` GROUP BY ProductID ORDER BY OrderCount DESC LIMIT 1");
+                                    if ($stmt->execute()) {
+                                        $result = $stmt->get_result();
+                                        if ($result->num_rows > 0) {
+                                            $stmt->close();
+                                            $row = $result->fetch_assoc();
+                                            $productId = $row['ProductID'];
+                                            $orderCount = $row['OrderCount'];
+
+                                            // Get top product name
+                                            $stmt = $conn->prepare("SELECT ProductName FROM product WHERE ProductID = ?");
+                                            $stmt->bind_param("s", $productId);
+
+                                            If ($stmt->execute()) {
+                                                $result = $stmt->get_result();
+                                                if ($result->num_rows > 0) {
+                                                    $row = $result->fetch_assoc();
+                                                    $response['data']['topProduct'] = array (
+                                                        'productName' => $row['ProductName'],
+                                                        'productCount' => $orderCount
+                                                    );
+                                                    echo json_encode($response);
+                                                    return;
+                                                } 
+                                                else {
+                                                    $response['retrievedData'] = false;
+                                                    echo json_encode($response);
+                                                    return;
+                                                }
+                                            }
+                                            else {
+                                                $response['success'] = false;
+                                                echo json_encode($response);
+                                                return;
+                                            }
+                                        }
+                                        else {
+                                            $response['retrievedData'] = false;
+                                            echo json_encode($response);
+                                            return;
+                                        }
+                                    }
+                                    else {
+                                        $response['success'] = false;
+                                        echo json_encode($response);
+                                        return;
+                                    }
+                                }
+                                else {
+                                    $response['retrievedData'] = false;
+                                    echo json_encode($response);
+                                    return;
+                                }
+                            }
+                            else {
+                                $response['success'] = false;
+                                echo json_encode($response);
+                                return;
+                            }
+                        }
+                        else {
+                            $response['retrievedData'] = false;
+                            echo json_encode($response);
+                            return;
+                        }
+                    }
+                    else {
+                        $response['success'] = false;
+                        echo json_encode($response);
+                        return;
+                    }
+                }
+                else {
+                    $response['success'] = false;
+                    $response['data'] = 'No data found';
+                }
+            }
+            else {
+                $response = array (
+                    'success' => false
+                );
+            }
+            echo json_encode($response);
+            return;
         }
         else if ($typeOfFetch == 'addProductDropdown') {
             $sql = "SELECT * FROM `product` ORDER BY ProductName ASC";
@@ -370,6 +507,59 @@
             else {
                 echo "Error retrieving product price query";
             }
+        }
+        else if ($typeOfFetch == 'userRecentOrder') {
+            $latestOrderId = $_POST['getLastOrderId'];
+
+            // Create statement
+            $stmt = $conn->prepare("SELECT * FROM `orderitem` WHERE OrderID = ?");
+            $stmt->bind_param("s", $latestOrderId);
+
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                $stmt->close();
+                if ($result->num_rows > 0) {
+                    $response = array ('success' => true);  
+                    
+                    while ($row = $result->fetch_assoc()) {
+                        // Get product name
+                        $stmt = $conn->prepare("SELECT ProductName FROM product WHERE ProductID = ?");
+                        $stmt->bind_param("s", $row['ProductID']);
+                        if ($stmt->execute()) {
+                            $result_product = $stmt->get_result();
+                            $response['orderItem'][] = $result_product->fetch_assoc();
+                        }
+                        else {
+                            $response = array (
+                                'success' => false,
+                                'message' => "Error retrieving product name"
+                            );
+                            echo json_encode($response);
+                            return;
+                        }
+                    }
+                    // If success return data
+                    echo json_encode($response);
+                    return;
+                }
+                else {
+                    $response = array (
+                        'success' => false,
+                        'message' => "No recent order"
+                    );
+                    echo json_encode($response);
+                    return;
+                }
+            }
+            else {
+                $response = array (
+                    'success' => false,
+                    'message' => "Error retrieving user recent order"
+                );
+                echo json_encode($response);
+                return;
+            }
+            echo json_encode($response);
         }
 
         // Search Record

@@ -255,3 +255,165 @@ select::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
+
+
+/* ADMIN DASHBOARD */
+#adminDashboardContainer {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 76px;
+    padding-bottom: 0;
+}
+
+#adminDashboardContainer .admin-form-container {
+    background-color: #D9D9D9;
+    height: 95%;
+    margin: 0;
+    width: 100%;
+    border-radius: 14px;
+    padding: 40px 70px;
+    color: #36304A;
+}
+
+/* sub details design */
+.admin-form-container .sub-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+    justify-content: space-around;
+    width: 100%;
+    height: 30%;
+}
+
+.admin-form-container .sub-details .admin-sub-1 {
+    grid-column: 1;
+    width: 100%;
+}
+
+.admin-form-container .sub-details .admin-sub-2 {
+    grid-column: 2;
+    width: 100%;
+    margin-left: 20px;
+}
+
+.admin-form-container .sub-details .admin-sub-3 {
+    grid-column: 3;
+    width: 100%;
+    margin-left: 20px;
+}
+
+.admin-form-container .sub-details div p:nth-child(1) {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.admin-form-container .sub-details div p:nth-child(2), .admin-form-container .sub-details div p:nth-child(2) span {
+    font-weight: 800;
+    font-size: 30px;
+}
+
+.admin-form-container .sub-details div p:nth-child(3) {
+    font-weight: 600;
+    font-size: 16px;
+    color: #757373;
+}
+
+.admin-sub-1 p:nth-child(1) {
+    color: #DB942A;
+}
+
+.admin-sub-2 p:nth-child(1) {
+    color: #4958CF;
+}
+
+
+.admin-sub-3 p:nth-child(1) {
+    color: #FA5E64;
+}
+
+
+/* main details design */
+.admin-form-container .main-details {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    grid-template-rows: 0.95fr 1.05fr;
+    gap: 20px;
+    width: 100%;
+    height: 70%;
+}
+
+.main-details .admin-main-1 {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    width: 100%;
+    background-color: #ECECEC;
+}
+
+.main-details .admin-main-2 {
+    grid-row: 1;
+    grid-column: 2;
+    width: 100%;
+    background-color: #ECECEC;
+}
+
+.main-details .admin-main-3 {
+    grid-row: 2;
+    grid-column: 2;
+    width: 100%;
+    background-color: #ECECEC;
+}
+
+.admin-main-2 p:nth-child(1) {
+    font-size: 26px;
+    font-weight: bolder;
+}
+
+.admin-main-2 p:nth-child(2) {
+    font-size: 16px;
+    font-weight: 500;
+    color: #757373;
+}
+
+.admin-main-2 p:nth-child(3), .admin-main-2 p:nth-child(3) span {
+    font-size: 50px;
+    font-weight: 800;
+}
+
+.admin-main-3 p:nth-child(1) {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.admin-main-3 p:nth-child(2) {
+    font-size: 36px;
+    font-weight: 800;
+    color: #7955ca;
+}
+
+.admin-main-3 .top-customer-sub-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.admin-main-3 .top-customer-sub-details p:nth-child(1) {
+    font-weight: 600;
+    font-size: 16px;
+    color: rgba(54, 48, 74, 0.7);
+}
+
+.admin-main-3 .top-customer-sub-details p:nth-child(2), .admin-main-3 .top-customer-sub-details p:nth-child(2) span {
+    font-weight: 700;
+    font-size: 32px;
+    color: #36304A;
+}
+
+.dashboard-padding {
+    padding: 20px;
+    outline: 2px solid #4958CF;
+}

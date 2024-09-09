@@ -39,7 +39,7 @@
 #userAddOrderContainer, #userDashboardContainer {
     display: flex;
     align-items: center;
-    justify-content: center;;
+    justify-content: center;
     width: 100%;
 }
 
@@ -445,7 +445,7 @@
 .user-form-container {
     display: flex;
     flex-direction: row;
-    width: 40%;
+    width: 50%;
     margin: 15px auto;
     text-align: center;
     justify-content: center;
@@ -454,6 +454,18 @@
     padding: 40px 100px;
     border-radius: 13px;
     gap: 20px;
+}
+
+#userAddOrderForm {
+    width: 100%;
+}
+
+#userAddOrderForm .user-flex {
+    text-align: left;
+}
+
+#userAddOrderForm .user-flex-button {
+    margin: 0;
 }
 
 .user-form-container img {

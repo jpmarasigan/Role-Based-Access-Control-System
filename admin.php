@@ -14,24 +14,26 @@ include 'retrieve_record.php';
     <link rel="stylesheet" href="css/modalStyles.css">
     <link rel="stylesheet" href="css/userStyles.css">
     <link rel="stylesheet" href="css/styles.css">
-    <title>Admin</title>
+    <title>OrderMaster</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
     </style>
+    <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
 </head>
 <body>
     <header>
         <nav class="ht-max">
             <ul class="ht-max">
-                <div class="list-container ht-max">
+                <div class="list-container admin-nav ht-max">
                     <div class="profile-div">
                         <li id="admin-nav-item-1" class="nav-item "><a href=""><img src='./assets/user/profile-icon.svg' class='svg-icon'></a></li>
                     </div>
                     <div>
-                        <li id="admin-nav-item-2" class="nav-item "><a href="#">Customer Form</a></li>
-                        <li id="admin-nav-item-3" class="nav-item "><a href="#">Customer Details Report</a></li>
-                        <li id="admin-nav-item-4" class="nav-item "><a href="#">Customer Order Report</a></li>
-                        <li id="admin-nav-item-5" class="nav-item "><a href="#">Product Catalog Report</a></li>
+                        <li id="admin-nav-item-2" class="nav-item "><a href="#">Dashboard</a></li>
+                        <li id="admin-nav-item-3" class="nav-item "><a href="#">Customer Form</a></li>
+                        <li id="admin-nav-item-4" class="nav-item "><a href="#">Customer Details Report</a></li>
+                        <li id="admin-nav-item-5" class="nav-item "><a href="#">Customer Order Report</a></li>
+                        <li id="admin-nav-item-6" class="nav-item "><a href="#">Product Catalog Report</a></li>
                     </div>
                 </div>
             </ul>
@@ -74,6 +76,53 @@ include 'retrieve_record.php';
 
         <!-- Backdrop -->
         <div id="profileDisplayBackDrop" class="modal" style="z-index: 2;"></div>
+
+        <!-- DASHBOARD -->
+        <div id="adminDashboardContainer" class="pd-main">
+            <div class="admin-form-container">
+                <div class="sub-details">
+                    <div class="admin-sub-1 ht-max">
+                        <p class="mg-bottom-10">Average Order Value</p>
+                        <p>&#8369; <span id="admin-average-order-value"></span></p>
+                        <p><span id="admin-average-order-value-percentage-gap"></span>% compared to last month</p>
+                    </div>
+                    <div class="admin-sub-2 ht-max">
+                        <p class="mg-bottom-10">Total Orders</p>
+                        <p id="admin-total-orders"></p>
+                        <p><span id="admin-total-orders-gap"></span> compared to last month</p>    
+                    </div>
+                    <div class="admin-sub-3 ht-max">
+                        <p class="mg-bottom-10">Top Selling Products</p>
+                        <p id="admin-top-product"></p>
+                    </div>
+                </div>
+                <div class="main-details">
+                    <div class="admin-main-1 ht-max dashboard-padding border-rad-form">
+                        <!-- GRAPH HERE -->
+                        <canvas id="myChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="admin-main-2 ht-max dashboard-padding border-rad-form">
+                        <p>Total Revenue</p>
+                        <p class="mg-bottom-10">Annually Total Revenue Report</p>
+                        <p>&#8369; <span id="admin-total-revenue"></span></p>
+                    </div>
+                    <div class="admin-main-3 ht-max dashboard-padding border-rad-form">
+                        <p>Top Customer</p>
+                        <p id="admin-top-customer" class="mg-bottom-10"></p>
+                        <div class='top-customer-sub-details'>
+                            <div>
+                                <p>Total Purchase Value</p>
+                                <p>&#8369; <span id="admin-total-purchase"></span><p>
+                            </div>
+                            <div>
+                                <p>Total Orders</p>
+                                <p id="admin-top-customer-total-orders"><p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- FORMS -->
         <div id="inputForm" class="container pd-main">
@@ -394,15 +443,15 @@ include 'retrieve_record.php';
                     </div>    
                     <div class="block-label-input mg-bottom-30">
                         <label for="edit-order-date">Order Date</label> 
-                        <input type="date" id="edit-order-date" class="underline-input" style="padding-right: 285px;" pattern="^\d{4}-\d{2}-\d{2}$" required>        
+                        <input type="date" id="edit-order-date" class="underline-input" style="padding-right: 285px;" pattern="^\d{4}-\d{2}-\d{2}$" readonly required>        
                     </div> 
                     <div class="block-label-input mg-bottom-30">
                         <label for="edit-receipt-date">Receipt Date</label> 
-                        <input type="date" id="edit-receipt-date" class="underline-input" style="padding-right: 285px;" pattern="^\d{4}-\d{2}-\d{2}$" readonly required>        
+                        <input type="date" id="edit-receipt-date" class="underline-input" style="padding-right: 285px;" pattern="^\d{4}-\d{2}-\d{2}$" required>        
                     </div>     
                     <div class="block-label-input mg-bottom-30">
                         <label for="edit-order-amount">Amount</label> 
-                        <input type="text" id="edit-order-amount" class="underline-input" pattern="^\d*(\.\d{0,2})?$" required>        
+                        <input type="text" id="edit-order-amount" class="underline-input" pattern="^\d*(\.\d{0,2})?$" readonly required>        
                     </div>     
                     <button type="submit" class="confirm-button modal-button semi-bold corner-smooth border-rad-filter" data-action="edit-customer-order">Save</button>
                     <button class="cancel-button modal-button mg-bottom-20 semi-bold corner-smooth border-rad-filter" data-action="cancel-edit-customer-order">Cancel</button>
@@ -576,5 +625,6 @@ include 'retrieve_record.php';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="./js/ajaxRequests.js"></script>
     <script src="./js/adminScripts.js"></script>
+    <script src="./js/adminChartScripts.js"></script>
 </body>
 </html>

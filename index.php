@@ -12,7 +12,7 @@ include 'retrieve_record.php';
         <link rel="stylesheet" href="css/modalStyles.css">
         <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="css/styles.css">
-        <title>Document</title>
+        <title>OrderMaster</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         </style>

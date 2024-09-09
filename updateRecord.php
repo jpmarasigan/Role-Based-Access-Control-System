@@ -59,7 +59,10 @@
                 } else {
                     echo "Error updating customer details";
                 }
-            };
+            }
+            else {
+                echo "Error updating customer details";
+            }
             $stmt->close();
         } 
         else if ($typeOfFetch == 'updateCustomerOrder') {

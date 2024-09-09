@@ -19,6 +19,10 @@ nav ul .list-container, nav ul .list-container div {
     align-items: center;
 }
 
+nav ul .admin-nav div {
+    gap: 110px;
+}
+
 nav > ul > .list-container > li, nav > ul > .list-container > div > li {
     list-style: none;
 }
